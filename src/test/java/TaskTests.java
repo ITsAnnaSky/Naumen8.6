@@ -5,9 +5,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import java.time.Duration;
+import java.util.List;
 
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TaskTests {
     static WebDriver driver;
 
@@ -24,32 +24,46 @@ public class TaskTests {
      * @throws InterruptedException
      */
     @Test
-    @Order(1)
     public void addFavorite() throws InterruptedException
     {
         //залогиниться
         login();
         Thread.sleep(3000);
 
-        //Нажать на иконку звёздочки
+        //Нажать на кнопку "Добавить в избранное"
         driver.findElement(By.id("favorite")).click();
         Thread.sleep(1000);
 
-        //Нажать "принять"
+        //Нажать "Принять"
         driver.findElement(By.id("gwt-debug-apply")).click();
         Thread.sleep(1000);
 
-        //Нажать на иконку звёздочки
+        //Нажать на "Избранное" слева
         driver.findElement(By.id("gwt-debug-12c338ac-168c-348b-a88c-b9594aed4be9")).click();
         Thread.sleep(1000);
 
         //Проверка
         WebElement element = driver.findElement(By.id("gwt-debug-menuItem"));
         String textElement = element.getText();
-        String msg = "Сообщение. Ожидалось: %s, Получили: %s";
         Assertions.assertEquals("employee1 \"Чупшева Анна\"/Карточка сотрудника", textElement);
 
-        //Нажать на иконку звёздочки слева
+        //Нажать на "Редактировать избранное"
+        driver.findElement(By.id("gwt-debug-editFavorites")).click();
+        Thread.sleep(1000);
+
+        //Удалить карточку из списка
+        driver.findElement(By.cssSelector(".del:nth-child(1)")).click();
+        Thread.sleep(1000);
+
+        //Нажать "Да"
+        driver.findElement(By.id("gwt-debug-YES")).click();
+        Thread.sleep(1000);
+
+        //Нажать "Сохранить"
+        driver.findElement(By.id("gwt-debug-apply")).click();
+        Thread.sleep(1000);
+
+        //Нажать на "Избранное" слева
         driver.findElement(By.id("gwt-debug-12c338ac-168c-348b-a88c-b9594aed4be9")).click();
 
         //Разлогиниться
@@ -62,22 +76,29 @@ public class TaskTests {
      * @throws InterruptedException
      */
     @Test
-    @Order(2)
     public void deleteFavorite() throws InterruptedException
     {
         //Залогиниться
         login();
         Thread.sleep(3000);
 
-        //Нажать на иконку звёздочки слева
+        //Нажать на кнопку "Добавить в избранное"
+        driver.findElement(By.id("favorite")).click();
+        Thread.sleep(1000);
+
+        //Нажать "Принять"
+        driver.findElement(By.id("gwt-debug-apply")).click();
+        Thread.sleep(1000);
+
+        //Нажать на "Избранное" слева
         driver.findElement(By.id("gwt-debug-12c338ac-168c-348b-a88c-b9594aed4be9")).click();
         Thread.sleep(1000);
 
-        //Редактировать
+        //Нажать на "Редактировать избранное"
         driver.findElement(By.id("gwt-debug-editFavorites")).click();
         Thread.sleep(1000);
 
-        //Удалить
+        //Удалить карточку из списка
         driver.findElement(By.cssSelector(".del:nth-child(1)")).click();
         Thread.sleep(1000);
 
@@ -85,17 +106,15 @@ public class TaskTests {
         driver.findElement(By.id("gwt-debug-YES")).click();
         Thread.sleep(1000);
 
-        //Сохранить
+        //Нажать "Сохранить"
         driver.findElement(By.id("gwt-debug-apply")).click();
         Thread.sleep(1000);
 
         //Проверка
-        WebElement element = driver.findElement(By.id("gwt-debug-menuItem"));
-        String textElement = element.getText();
-        String msg = "Сообщение. Ожидалось: %s, Получили: %s";
-        Assertions.assertEquals("", textElement);
+        List<WebElement> element = driver.findElements(By.xpath("//*[@id='gwt-debug-menuItem']"));
+        Assertions.assertFalse(element.isEmpty(), "Карточка пользователя не была удалена из меню");
 
-        //Нажать на иконку звёздочки слева
+        //Нажать на "Избранное" слева
         driver.findElement(By.id("gwt-debug-12c338ac-168c-348b-a88c-b9594aed4be9")).click();
 
         //Разлогиниться
@@ -117,5 +136,4 @@ public class TaskTests {
     {
         driver.close();
     }
-
 }
